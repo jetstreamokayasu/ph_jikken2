@@ -736,3 +736,11 @@ per_mean<-function(pd){
 }
 
 
+#minとmaxの間の値である要素番号を返す
+range_index<-function(X, min=0, max=0){
+  
+  idx<-which((X >= min) & (X < max) )
+  
+  return(idx)
+  
+}

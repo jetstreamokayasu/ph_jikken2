@@ -79,3 +79,4 @@ int_time300p<-system.time(trs300_incolle_set1C<-parLapply(cl, torus300_colle_set
   trs300_incolle_set1C_test_aggr<-proposedMethodOnly(trs300_incolle_set1c, 2, 3, 10)
   save2Rdata(trs300_incolle_set1C_test_aggr)
 }
+
