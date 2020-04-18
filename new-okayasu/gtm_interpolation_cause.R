@@ -66,3 +66,21 @@ trs300_incole_1D_widx<-range_index(trs300_incolle_1D_aggr[[1]], min = 0, max = 1
 
 #補間前に正しく、補間後に誤って推定されたトーラスのインデックス
 #元の点と補間点を対象とした点数削減後
+trs300_1C_intsec_idx<-intersect(trs300_1_rdx, trs300_incole_1C_widx)
+
+#補間前に正しく、補間後に誤って推定されたトーラスのインデックス
+#補間点のみを対象とした点数削減後
+trs300_1D_intsec_idx<-intersect(trs300_1_rdx, trs300_incole_1D_widx)
+
+#補間前に正しく、補間後に誤って推定されたトーラスのPD
+#補間点のみを対象とした点数削減後
+trs300_incolle_1D_intsec_pd<-parLapply(trs300_incolle_set1D[trs300_1D_intsec_idx], function(X){
+  
+  pd<-ripsDiag(X[["noizyX"]], 2, 3, printProgress = T)
+  sink(paste0("./parallel/", X[[1]], "data", format(Sys.time(), "%m%d_%H%M"), ".txt"))
+  print(paste("dataset has", X[[1]], "points"))
+  sink()
+  
+  return(pd)
+  
+  })
