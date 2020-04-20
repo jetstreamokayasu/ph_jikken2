@@ -12,6 +12,7 @@ clusterEvalQ(cl,{
   library(gtm)
   library(tidyverse)
   library(myfs)
+  library(TDA)
 })
 
 clusterEvalQ(cl, {
@@ -27,7 +28,6 @@ clusterEvalQ(cl, {
 stopCluster(cl)
 
 
-#parallelによる並列化
 #補間時間を測定
 #元の点と補間点両方対象の点数削減、補間点のみの点数削減でベッチ数推定制度比較
 

@@ -74,7 +74,7 @@ trs300_1D_intsec_idx<-intersect(trs300_1_rdx, trs300_incole_1D_widx)
 
 #補間前に正しく、補間後に誤って推定されたトーラスのPD
 #補間点のみを対象とした点数削減後
-trs300_incolle_1D_intsec_pd<-parLapply(trs300_incolle_set1D[trs300_1D_intsec_idx], function(X){
+trs300_incolle_1D_intsec_pd<-parLapply(cl, trs300_incolle_set1D[trs300_1D_intsec_idx], function(X){
   
   pd<-ripsDiag(X[["noizyX"]], 2, 3, printProgress = T)
   sink(paste0("./parallel/", X[[1]], "data", format(Sys.time(), "%m%d_%H%M"), ".txt"))
@@ -84,3 +84,37 @@ trs300_incolle_1D_intsec_pd<-parLapply(trs300_incolle_set1D[trs300_1D_intsec_idx
   return(pd)
   
   })
+
+#補間前に正しく、補間後に誤って推定されたトーラスのPD
+#元の点と補間点を対象とした点数削減後
+trs300_incolle_1C_intsec_pd<-lapply(trs300_incolle_set1C[trs300_1C_intsec_idx], function(X)ripsDiag(X[["noizyX"]], 2, 3, printProgress = T))
+
+#補間前の300点トーラスのPD
+trs300_colle1_pd<-lapply(torus300_colle_set[[1]], function(X)ripsDiag(X[["noizyX"]], 2, 3, printProgress = T))
+
+
+#補間前に正しく、全点対象、補間点のみそれぞれの点数削減の時に誤って推定されたインデックス
+trs300_1C_1D_intsec_idx<-intersect(trs300_1D_intsec_idx, trs300_1C_intsec_idx)
+
+#補間前に正しく、全点対象および補間点のみそれぞれの点数削減の時に誤って推定されたデータセットのPL
+#補間前10セット
+trs300_colle1_pls<-lapply(trs300_colle1_pd[trs300_1C_1D_intsec_idx[1:10]], function(X)calcLandscape(X))
+plot_lands(trs300_colle1_pls, 1)
+
+
+
+#補間後10セット。全点対象点数削減後
+#補間前正解、補間＋全点対象点数削減後不正解のインデックス
+trs300_1C_intsec_idx2<-trs300_1C_intsec_idx %in% trs300_1C_1D_intsec_idx[1:10]
+
+#補間前正解、補間＋全点対象点数削減後不正解のPL
+trs300_incolle_1C_intsec_pls<-lapply(trs300_incolle_1C_intsec_pd[trs300_1C_intsec_idx2], function(X)calcLandscape(X))
+plot_lands(trs300_incolle_1C_intsec_pls, 1)
+
+#補間後10セット。補間点のみ対象点数削減後
+#補間前正解、補間＋全点対象点数削減後不正解のインデックス
+trs300_1D_intsec_idx2<-trs300_1D_intsec_idx %in% trs300_1C_1D_intsec_idx[1:10]
+
+#補間前正解、補間＋全点対象点数削減後不正解のPL
+trs300_incolle_1D_intsec_pls<-lapply(trs300_incolle_1D_intsec_pd[trs300_1D_intsec_idx2], function(X)calcLandscape(X))
+plot_lands(trs300_incolle_1D_intsec_pls, 1)
