@@ -117,12 +117,18 @@ trs300_1D_intsec_idx2<-trs300_1D_intsec_idx %in% trs300_1C_1D_intsec_idx[1:10]
 trs300_incolle_1D_intsec_pls<-lapply(trs300_incolle_1D_intsec_pd[trs300_1D_intsec_idx2], function(X)calcLandscape(X))
 plot_lands(trs300_incolle_1D_intsec_pls, 1)
 
-#補間点の誤差を調べる
+#誤って推定されたデータセットの補間点の誤差を調べる
 #補間点のみ削除の場合
-trs300_incolle_1D_errs<-lapply(trs300_1C_1D_intsec_idx[1:10], function(i)torus_disterror(trs300_incolle_set1D[[1]][[i]][["noizyX"]], maxr = 2.5, minr = 1, nps = 300))
+trs300_incolle_1D_errs<-lapply(trs300_1C_1D_intsec_idx[1:10], function(i)torus_disterror(trs300_incolle_set1D[[i]][["noizyX"]], maxr = 2.5, minr = 1, nps = 300))
 oldpar <- par(no.readonly=T)
 par(mgp=c(2.4,1,0))
 boxplot(trs300_incolle_1D_errs, xlab="Data Set", ylab="Error", cex.lab=1.6, cex.axis=1.6, lwd=2)
+
+#全点対象点数削減
+trs300_incolle_1C_errs<-lapply(trs300_1C_1D_intsec_idx[1:10], function(i)torus_disterror(trs300_incolle_set1C[[i]][["noizyX"]], maxr = 2.5, minr = 1, nps = 0))
+oldpar <- par(no.readonly=T)
+par(mgp=c(2.4,1,0))
+boxplot(trs300_incolle_1C_errs, xlab="Data Set", ylab="Error", cex.lab=1.6, cex.axis=1.6, lwd=2)
 
 
 #---------------------------------------
@@ -147,6 +153,25 @@ trs300_incolle_1C_ridx_pd<-lapply(trs300_incolle_set1C[trs300_1C_1D_intsec_ridx]
 trs300_incolle_1D_ridx_pd<-lapply(trs300_incolle_set1D[trs300_1C_1D_intsec_ridx], function(X)ripsDiag(X[["noizyX"]], 2, 3, printProgress = T))
 
 #補間前後でどちらも正しく推定されたトーラスのPL
+#補間前10セット
+trs300_colle1_pls_B<-lapply(trs300_colle1_pd[trs300_1C_1D_intsec_ridx[1:10]], function(X)calc_landscape(X, maxscale = 3))
+plot_lands(trs300_colle1_pls_B, 1)
+
 #全点対象点数削減
-trs300_incolle_1C_ridx_pls<-lapply(trs300_incolle_1D_ridx_pd[trs300_1C_1D_intsec_ridx], function(X)calcLandscape(X))
-plot_lands(trs300_incolle_1C_ridx_pls, 1)
+trs300_incolle_1C_ridx_pls<-lapply(trs300_incolle_1C_ridx_pd, function(X)calc_landscape(X, maxscale = 3))
+plot_lands(trs300_incolle_1C_ridx_pls[1:10], 1)
+
+#補間点のみ削減
+trs300_incolle_1D_ridx_pls<-lapply(trs300_incolle_1D_ridx_pd, function(X)calc_landscape(X, maxscale = 3))
+plot_lands(trs300_incolle_1D_ridx_pls[1:10], 1)
+
+#正しく推定されたデータセットの補間点の誤差を調べる
+#補間点のみ点数削減
+trs300_incolle_1D_errs_B<-lapply(trs300_1C_1D_intsec_ridx[1:10], function(i)torus_disterror(trs300_incolle_set1D[[i]][["noizyX"]], maxr = 2.5, minr = 1, nps = 300))
+par(mgp=c(2.4,1,0))
+boxplot(trs300_incolle_1D_errs_B, xlab="Data Set", ylab="Error", cex.lab=1.6, cex.axis=1.6, lwd=2)
+
+#全点対象点数削減
+trs300_incolle_1C_errs_B<-lapply(trs300_1C_1D_intsec_ridx[1:10], function(i)torus_disterror(trs300_incolle_set1C[[i]][["noizyX"]], maxr = 2.5, minr = 1, nps = 0))
+boxplot(trs300_incolle_1C_errs_B, xlab="Data Set", ylab="Error", cex.lab=1.6, cex.axis=1.6, lwd=2)
+
