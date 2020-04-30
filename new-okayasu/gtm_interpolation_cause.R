@@ -101,8 +101,6 @@ trs300_1C_1D_intsec_idx<-intersect(trs300_1D_intsec_idx, trs300_1C_intsec_idx)
 trs300_colle1_pls<-lapply(trs300_colle1_pd[trs300_1C_1D_intsec_idx[1:10]], function(X)calcLandscape(X))
 plot_lands(trs300_colle1_pls, 1)
 
-
-
 #補間後10セット。全点対象点数削減後
 #補間前正解、補間＋全点対象点数削減後不正解のインデックス
 trs300_1C_intsec_idx2<-trs300_1C_intsec_idx %in% trs300_1C_1D_intsec_idx[1:10]
@@ -112,9 +110,43 @@ trs300_incolle_1C_intsec_pls<-lapply(trs300_incolle_1C_intsec_pd[trs300_1C_intse
 plot_lands(trs300_incolle_1C_intsec_pls, 1)
 
 #補間後10セット。補間点のみ対象点数削減後
-#補間前正解、補間＋全点対象点数削減後不正解のインデックス
+#補間前正解、補間＋補間点のみ対象点数削減後不正解のインデックス
 trs300_1D_intsec_idx2<-trs300_1D_intsec_idx %in% trs300_1C_1D_intsec_idx[1:10]
 
-#補間前正解、補間＋全点対象点数削減後不正解のPL
+#補間前正解、補間＋補間点のみ対象点数削減後不正解のPL
 trs300_incolle_1D_intsec_pls<-lapply(trs300_incolle_1D_intsec_pd[trs300_1D_intsec_idx2], function(X)calcLandscape(X))
 plot_lands(trs300_incolle_1D_intsec_pls, 1)
+
+#補間点の誤差を調べる
+#補間点のみ削除の場合
+trs300_incolle_1D_errs<-lapply(trs300_1C_1D_intsec_idx[1:10], function(i)torus_disterror(trs300_incolle_set1D[[1]][[i]][["noizyX"]], maxr = 2.5, minr = 1, nps = 300))
+oldpar <- par(no.readonly=T)
+par(mgp=c(2.4,1,0))
+boxplot(trs300_incolle_1D_errs, xlab="Data Set", ylab="Error", cex.lab=1.6, cex.axis=1.6, lwd=2)
+
+
+#---------------------------------------
+
+#補間前後でどちらも正しく推定されたデータセットのPL比較
+
+#元の点と補間点を対象とした点数削減後に正確に推定されたトーラス
+trs300_incole_1C_ridx<-range_index(trs300_incolle_1C_aggr[[1]], min = 1.5, max = 2.5)
+
+#補間点のみを対象とした点数削減後に正確に推定されたトーラス
+trs300_incole_1D_ridx<-range_index(trs300_incolle_1D_aggr[[1]], min = 1.5, max = 2.5)
+
+#補間前後でどちらも正しく推定されたトーラスのインデックス
+trs300_1C_1D_intsec_ridx<-intersect(trs300_1_rdx, trs300_incole_1C_ridx) %>% intersect(., trs300_incole_1D_ridx)
+
+#補間前後でどちらも正しく推定されたトーラスのPD
+#全点対象点数削減
+trs300_incolle_1C_ridx_pd<-lapply(trs300_incolle_set1C[trs300_1C_1D_intsec_ridx], function(X)ripsDiag(X[["noizyX"]], 2, 3, printProgress = T))
+
+#補間前後でどちらも正しく推定されたトーラスのPD
+#補間点のみ点数削減
+trs300_incolle_1D_ridx_pd<-lapply(trs300_incolle_set1D[trs300_1C_1D_intsec_ridx], function(X)ripsDiag(X[["noizyX"]], 2, 3, printProgress = T))
+
+#補間前後でどちらも正しく推定されたトーラスのPL
+#全点対象点数削減
+trs300_incolle_1C_ridx_pls<-lapply(trs300_incolle_1D_ridx_pd[trs300_1C_1D_intsec_ridx], function(X)calcLandscape(X))
+plot_lands(trs300_incolle_1C_ridx_pls, 1)
