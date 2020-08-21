@@ -171,6 +171,7 @@ calcDiagCentroid.mk2 <- function(diag = diagram){
 }
 
 #2次のパーシステンスを2倍にしてから求めた平均を閾値としている
+#一時的にspar = seq(0,0.5,0.05)としている
 bootstrap.homology.mk2 <- function(X,maxdim,maxscale,const.band=0,maximum.thresh = F){
   require(TDA)
   # require(pracma)
@@ -187,7 +188,7 @@ bootstrap.homology.mk2 <- function(X,maxdim,maxscale,const.band=0,maximum.thresh
     land <- lapply(1:maxdim,function(d)landscape(diags[[t]][[1]],dimension = d,KK = 1,tseq = tseq))
     if(maximum.thresh) band <- max(sapply(land,max))/4
     for(d in 1:maxdim){
-      peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band/d), tseq=tseq)
+      peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band/d), tseq=tseq, spar = seq(0,0.5,0.05))
     }
   }
   

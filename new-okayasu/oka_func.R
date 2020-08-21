@@ -23,60 +23,44 @@ uniDisMake<-function(N, R){
 }
 
 #ランドスケープを計算
-calcLandscape<-function(diag, line=T){
+calcLandscape<-function(diag, maxscale=3, line=T, plot=T){
   
-  maxscale <- 3
-  thresh<-calcDiagCentroid.mk2(diag)[1]
-  thresh.kde<-threshPerKDE(diag, 0.9)
-  thresh.zero<-mean(calcper(diag, 0))
+  if(class(diag)=="list"){diag<-diag[["diagram"]]}
+
+  thresh<-persistence_weighted_mean(diag)
   tseq <- seq(0, maxscale, length = 1000) #domain
-  Land.dim1 <- landscape(diag[[1]], dimension = 1, KK = 1, tseq)
-  plot(tseq, Land.dim1, type = "l", col=2, xlab = "(Birth + Death) / 2",ylab = "(Death - Birth) / 2", ylim=c(0, round(max(Land.dim1)+1)/2), main ="1-degree landscape")
-  if(line){
-  abline(h=thresh)
-  #abline(h=thresh.kde/2, col=4)
-  #abline(h=thresh.zero, col="orange")
-  }
+  maxdim<-max(diag[,1])
   
-  if(length(diag[[1]][diag[[1]][,1]==2,])>0){
-    Land.dim2 <- landscape(diag[[1]], dimension = 2, KK = 1, tseq)
-    #if(new){par(new=T)}
-    plot(tseq, Land.dim2, type = "l", col=3, xlab = "(Birth + Death) / 2",ylab = "(Death - Birth) / 2", ylim=c(0, round(max(Land.dim2)+1)/2), main ="2-degree landscape")
-    if(line){
-    abline(h=thresh/2)
-    #abline(h=thresh.kde/4, col=4)
-    #abline(h=thresh.zero/2, col="orange")
+  lands<-lapply(1:maxdim, function(k){
+    
+    land<-landscape(diag, dimension = k, KK = 1, tseq)
+    
+    if(plot){
+      
+      plot(tseq, land, type = "l", col=k+1, xlab = "(Birth + Death) / 2",ylab = "(Death - Birth) / 2", ylim=c(0, round(max(land)+0.5)), main = paste0(k, "-degree landscape"))
+      if(line){abline(h=thresh*((2*pi)/surface_nshpere(k)))}
+
     }
     
-    return(list(tseq=tseq, Land.dim1=Land.dim1, Land.dim2=Land.dim2, thresh=thresh))
+    return(land)
     
-  }else{return(list(tseq=tseq, Land.dim1=Land.dim1, thresh=thresh))}
+  })
+  
+  names(lands)<-sapply(1:maxdim, function(k)paste0(k, "-land"))
+  
+  return(append(lands, list(thresh=thresh, tseq=tseq)))
+  
 }
 
 #ランドスケープを描写
-plotLandscape<-function(land){
+plotLandscape<-function(lands, maxdim){
   
-  plotland<-lapply(2:(length(land)-1), function(k){
+  for (i in 1:maxdim) {
     
-    if(names(land)[k]=="Land.dim1"){
+    plot(lands[["tseq"]], lands[[paste0(i, "-land")]], type = "l", col=i+1, xlab = "(Birth + Death) / 2", ylab = "(Death - Birth) / 2", ylim=c(0, round(max(lands[[paste0(i, "-land")]])+0.5)), main = paste0(i, "-degree landscape"))
+    abline(h=lands[["thresh"]]*((2*pi)/surface_nshpere(i)))
     
-    plot(land[[1]], land[[k]], type = "l", col=k, xlab = "(Birth + Death) / 2", ylab = "(Death - Birth) / 2", ylim=c(0, round(max(land[[k]])+1)/2), main =paste0(k-1, "-degree landscape"))
-    abline(h=land[["thresh"]])
-      
-    }
-    
-    else if(names(land)[k]=="Land.dim2"){
-      
-      plot(land[[1]], land[[k]], type = "l", col=3, xlab = "(Birth + Death) / 2",ylab = "(Death - Birth) / 2", ylim=c(0, round(max(land[[k]])+1)/2), main =paste0(2, "-degree landscape"))
-      abline(h=land[["thresh"]]/2)
-      
-    }else{
-      
-      plot(land[[1]], land[[k]], type = "l", col=k, xlab = "(Birth + Death) / 2",ylab = "(Death - Birth) / 2", ylim=c(0, round(max(land[[k]])+1)/2), main =paste0(k-1, "-degree landscape"))
-      
-    }
-    
-    })
+  }
   
 }
 
