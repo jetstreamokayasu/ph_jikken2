@@ -595,13 +595,13 @@ Print <- function(...){
 
 
 #変数をRDataファイルに保存する関数
-save2Rdata <- function(...) {
-  require(tidyverse)
-  elp <- list(...)
-  elname <- substitute(...) %>% as.character()
-  assign(elname, elp[[1]])
-  save(list = elname, file = paste0("./data/", gsub("\\.", "_", elname), ".RData"))
-}
+# save2Rdata <- function(...) {
+#   require(tidyverse)
+#   elp <- list(...)
+#   elname <- substitute(...) %>% as.character()
+#   assign(elname, elp[[1]])
+#   save(list = elname, file = paste0("./data/", gsub("\\.", "_", elname), ".RData"))
+# }
 
 #変数をRDataファイルに保存する関数2
 #dataディレクトリがあるか確認し、なければ作成する
